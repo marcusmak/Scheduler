@@ -8,10 +8,10 @@ import 'package:path_provider/path_provider.dart';
 import 'package:sqflite/sqflite.dart';
 import 'package:flutter/widgets.dart'; //required.
 
-import 'HomePage.dart';
+import 'HomePage(old).dart';
 
 class LocalDataManager{
-  static Database database;
+  static Database? database;
 
   static void InitialiseDatabase() async{
 
@@ -61,11 +61,11 @@ class LocalDataManager{
 
   static void DownloadDatabase() async{
     var dbPath = join(await getDatabasesPath(), 'localDB.db');
-    Directory temp = await getExternalStorageDirectory();
-    print(temp.path);
+    Directory? temp = await getExternalStorageDirectory();
+    print(temp?.path);
     print(dbPath);
-    await temp.create(recursive: true);
-    File(dbPath).copy(temp.path+'/localDB.db');
+    await temp?.create(recursive: true);
+    File(dbPath).copy(temp!.path+'/localDB.db');
   }
 
 
@@ -73,14 +73,14 @@ class LocalDataManager{
     try{
       var dbPath = join(await getDatabasesPath(), 'localDB.db');
       database = await openDatabase(dbPath);
-      print("Broswing Table " + table.toString() + (await database.query(table)).toString());
-      database.close();
+      print("Broswing Table " + table.toString() + (await database?.query(table)).toString());
+      database?.close();
     }catch(e){
       print(e);
     }
   }
 
-  static Future<List<EventData>> FetchEvents() async{
+  static Future<List<EventData>?> FetchEvents() async{
     var dbPath = join(await getDatabasesPath(),'localDB.db');
         print("fetching all items");
         // if(!database.isOpen || database == null){
@@ -88,15 +88,15 @@ class LocalDataManager{
         // }
         try {
           String sql = "SELECT * FROM Event";
-          List<Map<String,dynamic>> res = await database.rawQuery(sql);
-          database.close();
+          List<Map<String,dynamic>> res = await database!.rawQuery(sql);
+          database!.close();
           return res.map((element)=>new EventData.fromMap(element)).toList();
         }catch(e){
           print("error in line 89 localdatamanager.dart");
           print(e);
         }
 
-        database.close();
+        database!.close();
         return null;
       }
 
@@ -108,17 +108,17 @@ class LocalDataManager{
     // }
     try {
       // String sql = "";
-      await database.insert("Event",{
+      await database!.insert("Event",{
         "title" : title,
       });
-      database.close();
+      database!.close();
       callback();
     }catch(e){
       print("error in line 89 localdatamanager.dart");
       print(e);
     }
 
-    database.close();
+    database!.close();
     return null;
   }
 
